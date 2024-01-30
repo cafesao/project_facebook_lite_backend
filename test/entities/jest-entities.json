@@ -1,0 +1,17 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleDirectories": ["node_modules", "src", "test"],
+  "roots": ["."],
+  "testEnvironment": "node",
+  "testRegex": ".entity-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@src(.*)$": "<rootDir>/../../src/$1"
+  },
+  "displayName": {
+    "name": "Entities",
+    "color": "blue"
+  }
+}

@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
-import { BaseEntity } from 'src/shared/domain/entities/base';
-import { InputDefault } from 'src/shared/domain/entities/inputs';
-import { ExceptionsConstants } from 'src/shared/domain/exceptions';
+import { BaseEntity } from '@src/shared/domain/entities/base';
+import { InputDefault } from '@src/shared/domain/entities/inputs';
+import { ExceptionsConstants } from '@src/shared/domain/exceptions';
 
 export class PostEntity extends BaseEntity {
   constructor() {
@@ -16,6 +16,20 @@ export class PostEntity extends BaseEntity {
   public create(input: Partial<PostEntity.Input>) {
     this.verifyInput(input);
     this.associateInput(input);
+  }
+
+  public createDefault() {
+    this.associateInput({
+      ownerUsernameId: '',
+      title: '',
+      description: '',
+      imageUrl: '',
+      id: '',
+      alternativeId: 0,
+      createdDate: new Date('01/01/2000'),
+      updatedDate: new Date('01/01/2000'),
+      deletedDate: new Date('01/01/2000'),
+    });
   }
 
   private associateInput(input: Partial<PostEntity.Input>) {
@@ -33,21 +47,9 @@ export class PostEntity extends BaseEntity {
   private verifyInput(input: Partial<PostEntity.Input>) {
     this.verifyId(input?.id);
     this.verifyOwnerId(input?.ownerUsernameId);
-    this.validateTitle(input?.title);
-    this.validateDescription(input?.description);
     this.validateImageUrl(input?.imageUrl);
   }
 
-  private validateTitle(input: string) {
-    if (!this.getRegex('validateTitle').test(input)) {
-      throw new BadRequestException(ExceptionsConstants.TITLE_NOT_VALID);
-    }
-  }
-  private validateDescription(input: string) {
-    if (!this.getRegex('verifyDescription').test(input)) {
-      throw new BadRequestException(ExceptionsConstants.DESCRIPTION_NOT_VALID);
-    }
-  }
   private validateImageUrl(input: string) {
     if (!this.getRegex('validateImageUrl').test(input)) {
       throw new BadRequestException(ExceptionsConstants.IMAGE_URL_NOT_VALID);
@@ -56,11 +58,10 @@ export class PostEntity extends BaseEntity {
 
   private getRegex(input: PostEntity.GetRegex): RegExp {
     const regexTest = {
-      validateTitle: /\s/g,
-      verifyDescription: /\s/g,
-      validateImageUrl: /\s/g,
+      validateImageUrl:
+        '^(http://www.|https://www.|http://|https://)?[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$',
     };
-    return regexTest[input];
+    return new RegExp(regexTest[input]);
   }
 
   public getState() {
@@ -82,10 +83,7 @@ export namespace PostEntity {
     imageUrl: string;
   };
 
-  export type GetRegex =
-    | 'validateTitle'
-    | 'verifyDescription'
-    | 'validateImageUrl';
+  export type GetRegex = 'validateImageUrl';
 
   export type Input = Create & InputDefault;
 }

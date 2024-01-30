@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
-import { BaseEntity } from 'src/shared/domain/entities/base';
-import { InputDefault } from 'src/shared/domain/entities/inputs';
-import { ExceptionsConstants } from 'src/shared/domain/exceptions';
+import { BaseEntity } from '@src/shared/domain/entities/base';
+import { InputDefault } from '@src/shared/domain/entities/inputs';
+import { ExceptionsConstants } from '@src/shared/domain/exceptions';
 
-export class UsersEntity extends BaseEntity {
+export class UserEntity extends BaseEntity {
   constructor() {
     super();
   }
@@ -12,12 +12,25 @@ export class UsersEntity extends BaseEntity {
   private email: string;
   private imageUrl: string;
 
-  public create(input: Partial<UsersEntity.Input>) {
+  public create(input: Partial<UserEntity.Input>) {
     this.verifyInput(input);
     this.associateInput(input);
   }
 
-  private associateInput(input: Partial<UsersEntity.Input>) {
+  public createDefault() {
+    this.associateInput({
+      username: '',
+      email: '',
+      imageUrl: '',
+      id: '',
+      alternativeId: 0,
+      createdDate: new Date('01/01/2000'),
+      updatedDate: new Date('01/01/2000'),
+      deletedDate: new Date('01/01/2000'),
+    });
+  }
+
+  private associateInput(input: Partial<UserEntity.Input>) {
     this.username = input?.username;
     this.email = input?.email;
     this.imageUrl = input?.imageUrl;
@@ -28,7 +41,7 @@ export class UsersEntity extends BaseEntity {
     this.deletedDate = input?.deletedDate;
   }
 
-  private verifyInput(input: Partial<UsersEntity.Input>) {
+  private verifyInput(input: Partial<UserEntity.Input>) {
     this.verifyId(input?.id);
     this.validateUsername(input?.username);
     this.validateEmail(input?.email);
@@ -43,22 +56,23 @@ export class UsersEntity extends BaseEntity {
     }
   }
   private validateEmail(input: string) {
-    if (!this.getRegex('validateImageUrl').test(input)) {
+    if (!this.getRegex('verifyEmail').test(input)) {
       throw new BadRequestException(ExceptionsConstants.EMAIL_NOT_VALID);
     }
   }
   private validateImageUrl(input: string) {
-    if (!this.getRegex('verifyEmail').test(input)) {
+    if (!this.getRegex('validateImageUrl').test(input)) {
       throw new BadRequestException(ExceptionsConstants.IMAGE_URL_NOT_VALID);
     }
   }
 
-  private getRegex(input: UsersEntity.GetRegex): RegExp {
+  private getRegex(input: UserEntity.GetRegex): RegExp {
     const regexTest = {
-      validateImageUrl: /\s/g,
-      verifyEmail: /\s/g,
+      validateImageUrl:
+        '^(http://www.|https://www.|http://|https://)?[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$',
+      verifyEmail: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
     };
-    return regexTest[input];
+    return new RegExp(regexTest[input]);
   }
 
   public getState() {
@@ -71,7 +85,7 @@ export class UsersEntity extends BaseEntity {
   }
 }
 
-export namespace UsersEntity {
+export namespace UserEntity {
   export type Create = {
     username: string;
     email: string;

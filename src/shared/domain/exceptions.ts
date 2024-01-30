@@ -6,4 +6,5 @@ export enum ExceptionsConstants {
   IMAGE_URL_NOT_VALID = 'exception:IMAGE_URL_NOT_VALID',
   TITLE_NOT_VALID = 'exception:TITLE_NOT_VALID',
   DESCRIPTION_NOT_VALID = 'exception:DESCRIPTION_NOT_VALID',
+  EMOTICON_NOT_VALID = 'exception:EMOTICON_NOT_VALID',
 }

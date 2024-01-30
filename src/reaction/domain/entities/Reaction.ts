@@ -1,5 +1,5 @@
-import { BaseEntity } from 'src/shared/domain/entities/base';
-import { InputDefault } from 'src/shared/domain/entities/inputs';
+import { BaseEntity } from '@src/shared/domain/entities/base';
+import { InputDefault } from '@src/shared/domain/entities/inputs';
 
 export class ReactionEntity extends BaseEntity {
   constructor() {
@@ -13,6 +13,19 @@ export class ReactionEntity extends BaseEntity {
   public create(input: Partial<ReactionEntity.Input>) {
     this.verifyInput(input);
     this.associateInput(input);
+  }
+
+  public createDefault() {
+    this.associateInput({
+      ownerUsernameId: '',
+      ownerPostId: '',
+      emoticonId: '',
+      id: '',
+      alternativeId: 0,
+      createdDate: new Date('01/01/2000'),
+      updatedDate: new Date('01/01/2000'),
+      deletedDate: new Date('01/01/2000'),
+    });
   }
 
   private associateInput(input: Partial<ReactionEntity.Input>) {
@@ -35,7 +48,7 @@ export class ReactionEntity extends BaseEntity {
 
   private getRegex(input: ReactionEntity.GetRegex): RegExp {
     const regexTest = {};
-    return regexTest[input];
+    return new RegExp(regexTest[input]);
   }
 
   public getState() {
