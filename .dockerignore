@@ -1,0 +1,8 @@
+node_modules
+dist
+.prettierrc
+*.md
+.vscode
+coverage
+.git
+.gitignore
